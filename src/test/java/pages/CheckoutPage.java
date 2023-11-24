@@ -27,12 +27,6 @@ public class CheckoutPage extends Page{
     public void continueShoppingButtonClick() {
         continueShoppingButton.click();
     }
-    @FindBy(id = "cancel")
-    public WebElement cancelButton;
-    @Step("Нажать кнопку отменить")
-    public void cancelButtonClick() {
-        cancelButton.click();
-    }
     @FindBy(id = "continue")
     public WebElement continueButton;
     @Step("Нажать кнопку продолжить")
@@ -68,7 +62,7 @@ public class CheckoutPage extends Page{
     }
     @Step("Посчитать 8% налог")
     public double countTax(double price){
-        BigDecimal bd = new BigDecimal((price/100)*8).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal bd = BigDecimal.valueOf((price / 100) * 8).setScale(2, RoundingMode.HALF_UP);
         return  bd.doubleValue();
     }
     @Step("Посчитать итоговую сумму")

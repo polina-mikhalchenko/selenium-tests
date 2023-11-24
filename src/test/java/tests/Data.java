@@ -1,10 +1,7 @@
 package tests;
+
 import model.CheckoutInfo;
 import model.Customer;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 public class Data {
     public static Object [] [] validCustomer() {

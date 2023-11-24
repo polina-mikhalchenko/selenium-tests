@@ -4,10 +4,10 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
-
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +20,6 @@ public class InventoryPage extends Page{
     public void openInventoryPage() {
         driver.get("https://www.saucedemo.com/inventory.html");
     }
-    @FindBy(id = "shopping_cart_container")
-    public WebElement shoppingCartContainer;
     @Step("Получить количество элементов находящихся в корзине по значку на иконке корзины")
     public String getNumberByShoppingCartBadge() {
         return driver.findElement(By.xpath("//span[@class='shopping_cart_badge']")).getText();
@@ -77,4 +75,8 @@ public class InventoryPage extends Page{
     public ArrayList<WebElement> getCartProducts() {
         return  (ArrayList<WebElement>) driver.findElements(By.className("cart_item"));
     }
+    public List<WebElement> productsList(String elemName) {
+        return driver.findElements(By.className(elemName));
+    }
+
 }

@@ -18,7 +18,7 @@ public class Tests extends TestBase{
     @MethodSource("tests.Data#validCustomer")
     @Description("Вход пользователя с корректными данными")
     public void correctLogin(Customer customer) {
-        app.login(customer.getUsername(), customer.getPassword());
+        app.session.login(customer.getUsername(), customer.getPassword());
         boolean text = app.textIsOnThisPage("Products");
         assertTrue(text);
     }
@@ -26,17 +26,17 @@ public class Tests extends TestBase{
     @MethodSource("tests.Data#invalidCustomer")
     @Description("Вход пользователя с некорректными данными")
     public void incorrectLogin(Customer customer) {
-        app.login(customer.getUsername(), customer.getPassword());
+        app.session.login(customer.getUsername(), customer.getPassword());
         boolean text = app.textIsOnThisPage(customer.getText());
         assertTrue(text);
     }
     @Test
     @Description("Сортировка товара по убыванию в алфовитном порядке")
     public void sortByZtoA() {
-        app.standardUserLogin();
-        ArrayList<String> oldList = app.getAllProductsFromStore("inventory_item_name");
-        app.sort("Name (Z to A)", "inventory_item_name");
-        ArrayList<String> newList = app.getAllProductsFromStore("inventory_item_name");
+        app.session.standardUserLogin();
+        ArrayList<String> oldList = app.inventory.getAllProductsFromStore("inventory_item_name");
+        app.inventory.sort("Name (Z to A)", "inventory_item_name");
+        ArrayList<String> newList = app.inventory.getAllProductsFromStore("inventory_item_name");
         ArrayList<String> correctList = new ArrayList<>(oldList);
         correctList.sort(Comparator.reverseOrder());
         assertNotEquals(oldList, newList);
@@ -45,10 +45,10 @@ public class Tests extends TestBase{
     @Test
     @Description("Сортировка товара по возрастанию цены")
     public void sortByPriceLowToHigh() {
-        app.standardUserLogin();
-        ArrayList<String> oldList = app.getAllProductsFromStore("inventory_item_price");
-        app.sort("Price (low to high)", "inventory_item_price");
-        ArrayList<String> newList = app.getAllProductsFromStore("inventory_item_price");
+        app.session.standardUserLogin();
+        ArrayList<String> oldList = app.inventory.getAllProductsFromStore("inventory_item_price");
+        app.inventory.sort("Price (low to high)", "inventory_item_price");
+        ArrayList<String> newList = app.inventory.getAllProductsFromStore("inventory_item_price");
         ArrayList<String> correctList = new ArrayList<>(oldList);
         correctList.sort(Comparators.ascComparator);
         assertNotEquals(oldList, newList);
@@ -57,10 +57,10 @@ public class Tests extends TestBase{
     @Test
     @Description("Сортировка товара по убыванию цены")
     public void sortByPriceHighToLow() {
-        app.standardUserLogin();
-        ArrayList<String> oldList = app.getAllProductsFromStore("inventory_item_price");
-        app.sort("Price (high to low)", "inventory_item_price");
-        ArrayList<String> newList = app.getAllProductsFromStore("inventory_item_price");
+        app.session.standardUserLogin();
+        ArrayList<String> oldList = app.inventory.getAllProductsFromStore("inventory_item_price");
+        app.inventory.sort("Price (high to low)", "inventory_item_price");
+        ArrayList<String> newList = app.inventory.getAllProductsFromStore("inventory_item_price");
         ArrayList<String> correctList = new ArrayList<>(oldList);
         correctList.sort(Comparators.descComparator);
         assertNotEquals(oldList, newList);
@@ -69,9 +69,9 @@ public class Tests extends TestBase{
     @Test
     @Description("Добаление товара в корзину")
     public void addItemsToCart() {
-        app.standardUserLogin();
-        HashMap items = app.addProductToCart();
-        HashMap itemsInCart = app.checkProductsInCart();
+        app.session.standardUserLogin();
+        HashMap<String, Double> items = app.inventory.addProductToCart();
+        HashMap<String, Double> itemsInCart = app.inventory.checkProductsInCart();
         assertEquals(items, itemsInCart);
     }
 
@@ -79,10 +79,10 @@ public class Tests extends TestBase{
     @MethodSource("tests.Data#customerInfo")
     @Description("Оформление заказа")
     public void checkout(CheckoutInfo checkoutInfo){
-        app.standardUserLogin();
-        HashMap items = app.addProductToCart();
-        app.inputCheckoutInfo(checkoutInfo);
-        app.checkoutOverview(items);
+        app.session.standardUserLogin();
+        HashMap<String, Double> items = app.inventory.addProductToCart();
+        app.checkout.inputCheckoutInfo(checkoutInfo);
+        app.checkout.checkoutOverview(items);
         boolean text = app.textIsOnThisPage(checkoutInfo.getText());
         assertTrue(text);
     }
@@ -90,8 +90,8 @@ public class Tests extends TestBase{
     @MethodSource("tests.Data#invalidCustomerInfo")
     @Description("Проверка ошибок в форме оформления заказа")
     public void invalidCheckout(CheckoutInfo checkoutInfo){
-        app.standardUserLogin();
-        app.inputCheckoutInfo(checkoutInfo);
+        app.session.standardUserLogin();
+        app.checkout.inputCheckoutInfo(checkoutInfo);
         boolean text = app.textIsOnThisPage(checkoutInfo.getText());
         assertTrue(text);
     }

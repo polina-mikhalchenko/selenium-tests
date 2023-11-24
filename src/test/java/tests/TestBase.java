@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 public class TestBase {
     public static ThreadLocal<Application> tlApp = new ThreadLocal<>();
     public Application app;
-
     @Step("Start the application")
     @BeforeEach
     public void start () {
@@ -22,6 +21,5 @@ public class TestBase {
 
         Runtime.getRuntime().addShutdownHook(
                 new Thread(() -> { app.quit(); app = null;}));
-
     }
 }
