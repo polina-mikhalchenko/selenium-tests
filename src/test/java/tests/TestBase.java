@@ -2,6 +2,8 @@ package tests;
 
 import app.Application;
 import io.qameta.allure.Step;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 public class TestBase {

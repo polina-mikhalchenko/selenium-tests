@@ -4,14 +4,18 @@ import io.qameta.allure.Description;
 import model.CheckoutInfo;
 import model.Customer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import comparators.Comparators;
-import static org.junit.jupiter.api.Assertions.*;
+import utils.MyExtension;
+import utils.MyTestWatcher;
 
+import static org.junit.jupiter.api.Assertions.*;
+@ExtendWith(MyExtension.class)
 public class Tests extends TestBase{
 
     @ParameterizedTest
@@ -21,6 +25,11 @@ public class Tests extends TestBase{
         app.session.login(customer.getUsername(), customer.getPassword());
         boolean text = app.textIsOnThisPage("Products");
         assertTrue(text);
+    }
+    @Test
+    public void error() {
+        app.session.login("error", "123");
+        app.inventory.addProductToCart();
     }
     @ParameterizedTest
     @MethodSource("tests.Data#invalidCustomer")

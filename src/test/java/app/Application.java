@@ -6,7 +6,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import java.util.NoSuchElementException;
 
 public class Application {
-    private WebDriver driver;
+    private static WebDriver driver;
     public LoginHelper session;
     public InventoryHelper inventory;
     public CheckoutHelper checkout;
@@ -16,6 +16,9 @@ public class Application {
         session = new LoginHelper(driver);
         inventory = new InventoryHelper(driver);
         checkout = new CheckoutHelper(driver);
+    }
+    public static WebDriver getDriver() {
+        return driver;
     }
     public void quit () {
         driver.quit();
@@ -29,5 +32,4 @@ public class Application {
         return false;
     }
 }
-
 }

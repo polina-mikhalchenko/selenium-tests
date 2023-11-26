@@ -21,7 +21,7 @@ public class CheckoutHelper {
                 checkInfo.getFirstName(), checkInfo.getLastName(), checkInfo.getPostalCode());
         checkoutPage.continueButtonClick();
     }
-    public void checkoutOverview(HashMap price) {
+    public void checkoutOverview(HashMap <String, Double> price) {
         double expPrice = checkoutPage.countPriceWithoutTax(price);
         double actPrice = checkoutPage.getPriceWithoutTax();
         assertEquals(expPrice, actPrice);
