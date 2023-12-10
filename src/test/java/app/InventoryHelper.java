@@ -35,6 +35,7 @@ public class InventoryHelper{
     }
     public HashMap<String, Double> addProductToCart() {
         //refresh app to clean the shopping cart
+
         inventoryPage.resetAppState();
         inventoryPage.openInventoryPage();
         int randomQuantityItemsToAdd = inventoryPage.randQuantity(MAX_ITEMS_IN_CART, MIN_ITEMS_IN_CART);

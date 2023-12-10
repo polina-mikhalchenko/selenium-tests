@@ -31,6 +31,7 @@ public class InventoryPage extends Page{
     }
     @Step("Сбросить состояние приложения")
     public void resetAppState() {
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
         driver.findElement(By.id("react-burger-menu-btn")).click();
         driver.findElement(By.id("reset_sidebar_link")).click();
         driver.findElement(By.id("react-burger-cross-btn")).click();

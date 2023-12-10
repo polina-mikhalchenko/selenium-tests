@@ -1,35 +1,48 @@
 package app;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import driver.DriverManager;
+import io.qameta.allure.Attachment;
+import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import java.util.NoSuchElementException;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+import java.util.List;
 
 public class Application {
-    private static WebDriver driver;
+    private RemoteWebDriver driver;
+    protected WebDriverWait wait;
     public LoginHelper session;
     public InventoryHelper inventory;
     public CheckoutHelper checkout;
 
-    public Application () {
-        driver = new FirefoxDriver();
+
+
+    public Application (RemoteWebDriver _driver) {
+        driver = _driver;
         session = new LoginHelper(driver);
         inventory = new InventoryHelper(driver);
         checkout = new CheckoutHelper(driver);
     }
     public static WebDriver getDriver() {
-        return driver;
+        return DriverManager.getDriver();
     }
+
+
     public void quit () {
         driver.quit();
     }
 
     public boolean textIsOnThisPage(String text) {
-    try {
-        driver.findElements(By.xpath("//*[text()='" + text + "']"));
-        return true;
-    } catch (NoSuchElementException e) {
-        return false;
+        List<WebElement> l= driver.findElements(By.xpath("//*[contains(text(),'" + text + "')]"));
+        return !l.isEmpty();
     }
-}
+
+
+
+
+
+
 }

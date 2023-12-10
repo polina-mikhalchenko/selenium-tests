@@ -1,47 +1,52 @@
 package tests;
 
+import comparators.Comparators;
+import driver.BrowserFactory;
 import io.qameta.allure.Description;
 import model.CheckoutInfo;
 import model.Customer;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import utils.MyExtension;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import comparators.Comparators;
-import utils.MyExtension;
-import utils.MyTestWatcher;
 
 import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MyExtension.class)
-public class Tests extends TestBase{
-
+public class CrossBrowserTests extends TestBase{
     @ParameterizedTest
-    @MethodSource("tests.Data#validCustomer")
+    @MethodSource("tests.DataForLogin#validCustomer")
     @Description("Вход пользователя с корректными данными")
     public void correctLogin(Customer customer) {
+        beforeStartEachTest(customer.getBrowser());
+        updateTestNameAndHistoryIdForAllure((
+                customer.getBrowser() + ": " + "Пользователь: " + customer.getUsername()), (customer.getBrowser()));
         app.session.login(customer.getUsername(), customer.getPassword());
         boolean text = app.textIsOnThisPage("Products");
         assertTrue(text);
     }
-    @Test
-    public void error() {
-        app.session.login("error", "123");
-        app.inventory.addProductToCart();
-    }
     @ParameterizedTest
-    @MethodSource("tests.Data#invalidCustomer")
+    @MethodSource("tests.DataForLogin#invalidCustomer")
     @Description("Вход пользователя с некорректными данными")
     public void incorrectLogin(Customer customer) {
+        beforeStartEachTest(customer.getBrowser());
+        updateTestNameAndHistoryIdForAllure((
+                customer.getBrowser() + ": " + "Проверить ошибку при входе в систему: " + customer.getText()), (customer.getBrowser()));
         app.session.login(customer.getUsername(), customer.getPassword());
         boolean text = app.textIsOnThisPage(customer.getText());
         assertTrue(text);
     }
-    @Test
+    @ParameterizedTest
+    @EnumSource(BrowserFactory.class)
     @Description("Сортировка товара по убыванию в алфовитном порядке")
-    public void sortByZtoA() {
+    public void sortByZtoA(BrowserFactory browser) {
+        beforeStartEachTest(browser.name().toLowerCase());
+        updateTestNameAndHistoryIdForAllure((
+                browser.name() + ": " + "Отсортировать товары в каталоге от Z до A"), (browser.name()));
         app.session.standardUserLogin();
         ArrayList<String> oldList = app.inventory.getAllProductsFromStore("inventory_item_name");
         app.inventory.sort("Name (Z to A)", "inventory_item_name");
@@ -51,9 +56,13 @@ public class Tests extends TestBase{
         assertNotEquals(oldList, newList);
         assertEquals(newList, correctList);
     }
-    @Test
+    @ParameterizedTest
+    @EnumSource(BrowserFactory.class)
     @Description("Сортировка товара по возрастанию цены")
-    public void sortByPriceLowToHigh() {
+    public void sortByPriceLowToHigh(BrowserFactory browser) {
+        beforeStartEachTest(browser.name().toLowerCase());
+        updateTestNameAndHistoryIdForAllure((
+                browser.name() + ": " + "Отсортировать товары в каталоге по возрастанию цены"), (browser.name()));
         app.session.standardUserLogin();
         ArrayList<String> oldList = app.inventory.getAllProductsFromStore("inventory_item_price");
         app.inventory.sort("Price (low to high)", "inventory_item_price");
@@ -63,9 +72,14 @@ public class Tests extends TestBase{
         assertNotEquals(oldList, newList);
         assertEquals(correctList, newList);
     }
-    @Test
+
+    @ParameterizedTest
+    @EnumSource(BrowserFactory.class)
     @Description("Сортировка товара по убыванию цены")
-    public void sortByPriceHighToLow() {
+    public void sortByPriceHighToLow(BrowserFactory browser) {
+        beforeStartEachTest(browser.name().toLowerCase());
+        updateTestNameAndHistoryIdForAllure((
+                browser.name() + ": " + "Отсортировать товары в каталоге по убыванию цены"), (browser.name()));
         app.session.standardUserLogin();
         ArrayList<String> oldList = app.inventory.getAllProductsFromStore("inventory_item_price");
         app.inventory.sort("Price (high to low)", "inventory_item_price");
@@ -75,9 +89,13 @@ public class Tests extends TestBase{
         assertNotEquals(oldList, newList);
         assertEquals(newList, correctList);
     }
-    @Test
+    @ParameterizedTest
+    @EnumSource(BrowserFactory.class)
     @Description("Добаление товара в корзину")
-    public void addItemsToCart() {
+    public void addItemsToCart(BrowserFactory browser) {
+        beforeStartEachTest(browser.name().toLowerCase());
+        updateTestNameAndHistoryIdForAllure((
+                browser.name() + ": " + "Добавить товары в корзину"), (browser.name()));
         app.session.standardUserLogin();
         HashMap<String, Double> items = app.inventory.addProductToCart();
         HashMap<String, Double> itemsInCart = app.inventory.checkProductsInCart();
@@ -85,9 +103,13 @@ public class Tests extends TestBase{
     }
 
     @ParameterizedTest
-    @MethodSource("tests.Data#customerInfo")
+    @MethodSource("tests.DataForCheckout#customerInfo")
     @Description("Оформление заказа")
     public void checkout(CheckoutInfo checkoutInfo){
+        beforeStartEachTest(checkoutInfo.getBrowser());
+        updateTestNameAndHistoryIdForAllure((
+                checkoutInfo.getBrowser() + ": " + "Оформить заказ на Имя: " +
+                        checkoutInfo.getFirstName() + " " + checkoutInfo.getLastName() ), (checkoutInfo.getBrowser()));
         app.session.standardUserLogin();
         HashMap<String, Double> items = app.inventory.addProductToCart();
         app.checkout.inputCheckoutInfo(checkoutInfo);
@@ -96,9 +118,13 @@ public class Tests extends TestBase{
         assertTrue(text);
     }
     @ParameterizedTest
-    @MethodSource("tests.Data#invalidCustomerInfo")
+    @MethodSource("tests.DataForCheckout#invalidCustomerInfo")
     @Description("Проверка ошибок в форме оформления заказа")
     public void invalidCheckout(CheckoutInfo checkoutInfo){
+        beforeStartEachTest(checkoutInfo.getBrowser());
+        updateTestNameAndHistoryIdForAllure((
+                checkoutInfo.getBrowser() + ": " + "В форме оформления заказа проверить ошибку:" +
+                        checkoutInfo.getText()), (checkoutInfo.getBrowser()));
         app.session.standardUserLogin();
         app.checkout.inputCheckoutInfo(checkoutInfo);
         boolean text = app.textIsOnThisPage(checkoutInfo.getText());

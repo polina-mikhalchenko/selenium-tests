@@ -4,6 +4,9 @@ import model.CheckoutInfo;
 import org.openqa.selenium.WebDriver;
 import pages.CheckoutPage;
 import pages.InventoryPage;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,11 +28,12 @@ public class CheckoutHelper {
         double expPrice = checkoutPage.countPriceWithoutTax(price);
         double actPrice = checkoutPage.getPriceWithoutTax();
         assertEquals(expPrice, actPrice);
-        double expTax = checkoutPage.countTax(expPrice);
+        BigDecimal expTax = checkoutPage.countTax(expPrice);
         double actTax = checkoutPage.getTax();
-        assertEquals(expTax, actTax);
-        double expTotal = checkoutPage.countTotalPrice(expPrice, expTax);
+        assertEquals(expTax, BigDecimal.valueOf(actTax).setScale(2, RoundingMode.HALF_UP));
+        BigDecimal expTotal = checkoutPage.countTotalPrice(expPrice, expTax);
         double actTotal = checkoutPage.getTotalPrice();
-        assertEquals(expTotal, actTotal);
+        assertEquals(expTotal, BigDecimal.valueOf(actTotal).setScale(2, RoundingMode.HALF_UP));
+        checkoutPage.finishButtonClick();
     }
 }

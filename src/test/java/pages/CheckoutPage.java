@@ -33,6 +33,10 @@ public class CheckoutPage extends Page{
     public void continueButtonClick() {
         continueButton.click();
     }
+    @FindBy(id = "finish")
+    public WebElement finishButton;
+    @Step("Нажать кнопку завершить")
+    public void finishButtonClick(){finishButton.click();}
     @Step("Заполнить форму оформления заказа")
     public void fillCheckoutForm(String firstName, String lastName, String postalCode) {
         driver.findElement(By.id("first-name")).sendKeys(firstName);
@@ -61,14 +65,13 @@ public class CheckoutPage extends Page{
         return findPriceOnPage("summary_tax_label");
     }
     @Step("Посчитать 8% налог")
-    public double countTax(double price){
-        BigDecimal bd = BigDecimal.valueOf((price / 100) * 8).setScale(2, RoundingMode.HALF_UP);
-        return  bd.doubleValue();
+    public BigDecimal countTax(double price){
+        return BigDecimal.valueOf((price / 100) * 8).setScale(2, RoundingMode.HALF_UP);
     }
     @Step("Посчитать итоговую сумму")
-    public double countTotalPrice(double price, double tax) {
-        BigDecimal bd = new BigDecimal(price + tax).setScale(2, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+    public BigDecimal countTotalPrice(double price, BigDecimal tax) {
+        BigDecimal bd = new BigDecimal(price + tax.doubleValue()).setScale(2, RoundingMode.HALF_UP);
+        return bd.setScale(2, RoundingMode.HALF_UP);
     }
     @Step("Получить итоговую сумму")
     public double getTotalPrice() {
